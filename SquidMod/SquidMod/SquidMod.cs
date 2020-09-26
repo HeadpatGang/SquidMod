@@ -4,6 +4,7 @@ using R2API;
 using R2API.Utils;
 using UnityEngine;
 using System;
+using System.Speech.Synthesis;
 
 namespace SquidPatrol
 {
@@ -13,7 +14,9 @@ namespace SquidPatrol
     public class SquidPatrol : BaseUnityPlugin
     {
         readonly string[] itemList = { "EquipmentIndex.AffixRed", "EquipmentIndex.AffixBlue", "EquipmentIndex.AffixWhite", "EquipmentIndex.AffixHaunted" };
+
         private static ItemDef squidTurretItem;
+        public EntityStateMachine outer;
 
         public void Awake()
         {
@@ -21,6 +24,7 @@ namespace SquidPatrol
             ItemDefinition();
             Hook();
         }
+
         private void ItemDefinition()
         {
             //Defines the item to be used later on
@@ -62,17 +66,14 @@ namespace SquidPatrol
             On.RoR2.GlobalEventManager.OnCharacterDeath += GalaticAquaticAquarium;
         }
 
-        private void SquidSpawnLogic()
+        private void Zoom()
         {
 
         }
 
-        private void AffixManip(CharacterMaster squidTurret)
+        private void SquidSpawnLogic()
         {
-            for (int i = 0; i < itemList.Length; i++)
-            {
-                
-            }
+
         }
 
         private void AffixRNG(CharacterMaster squidTurret)
@@ -141,7 +142,6 @@ namespace SquidPatrol
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
                         //RNG roll, 1% chance to spawn with an affix, all rolls are indepenant, potential for multi affix memes in the future.
                         AffixRNG(squidTurret);
-                        AffixManip(squidTurret);
                     }));
                     //Finally, sending the reuqest to spawn the squid with everything so far.
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
@@ -167,7 +167,7 @@ namespace SquidPatrol
                 //pcmc is then accessing the inventory of the player & spawning in a Deadmans Friend & a Dio's Best Friend
                 PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
                 PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
-                pcmc[0].master.inventory.GiveItem(squidTurretItem.itemIndex);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.Squid);
                 pcmc[0].master.inventory.GiveItem(ItemIndex.ExtraLife);
 
             };
