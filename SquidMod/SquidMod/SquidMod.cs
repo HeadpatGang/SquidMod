@@ -38,9 +38,9 @@ namespace SquidPatrol
         private void AddTokens()
         {
             R2API.LanguageAPI.Add("SQUID_TURRET_NAME", "Deadmans Friend");
-            R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawn a Squid on Kill, Change for Affix");
-            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Whenever you <style=cIsDamage> kill an enemy</style> you have a <style=cIsUtility>1%</style> chance to spawn a Squid with an Affix. <style=cIsUtility>100% Chance to spawn a Squid </style>");
-            R2API.LanguageAPI.Add("SQUID_TURRET_LORE", "PLACEHOLDER_LORE_FOR_RETRO_TO_DECIDE_ON");
+            R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawn a Squid on Kill");
+            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Whenever you <style=cIsDamage> kill an enemy</style> you have a <style=cIsUtility>1%</style> chance to spawn a Squid with an Affix.");
+            R2API.LanguageAPI.Add("SQUID_TURRET_LORE", "One squid in the ocean is worth a thousand on land.");
         }
 
         private void Hook()
