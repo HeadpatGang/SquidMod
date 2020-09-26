@@ -24,8 +24,8 @@ namespace SquidPatrol
                 descriptionToken = "SQUID_TURRET_DESC",
                 loreToken = "SQUID_TURRET_LORE",
                 tier = ItemTier.Tier3,
-                pickupIconPath = "Textures/MiscIcons/texMysteryIcon",
-                pickupModelPath = "Prefabs/PickupModels/PickupMystery",
+                pickupModelPath = "Prefabs/PickupModels/PickupSquidTurret",
+                pickupIconPath = "Textures/ItemIcons/texSquidTurretIcon",
                 canRemove = true,
                 hidden = false,
             };
@@ -105,6 +105,13 @@ namespace SquidPatrol
 
         public void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
+                //And then drop our defined item in front of the player.
+                PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(squidTurretItem.itemIndex), transform.position, transform.forward * 20f);
+            };
+
             if (Input.GetKeyDown(KeyCode.F2))
             {
                 //Too lazy to write GiveItem Squid 1 everytime I load into a map
