@@ -17,6 +17,11 @@ namespace SquidPatrol
         public void Awake()
         {
             //Defines the item to be used later on
+            ItemDefinition();
+            Hook();
+        }
+        private void ItemDefinition()
+        {
             squidTurretItem = new ItemDef
             {
                 //R2 API Tokens
@@ -38,7 +43,6 @@ namespace SquidPatrol
             var displayRules = new ItemDisplayRuleDict(null);
             AddTokens();
             ItemAPI.Add(new CustomItem(squidTurretItem, displayRules));
-            Hook();
         }
 
         private void AddTokens()
