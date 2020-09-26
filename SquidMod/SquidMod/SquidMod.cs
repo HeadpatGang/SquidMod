@@ -45,8 +45,7 @@ namespace SquidPatrol
                     directorSpawnRequest2.onSpawnedServer = (Action<SpawnCard.SpawnResult>)Delegate.Combine(directorSpawnRequest2.onSpawnedServer, new Action<SpawnCard.SpawnResult>(delegate (SpawnCard.SpawnResult result)
                     {
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
-                        squidTurret.inventory.GiveItem(ItemIndex.Squid);
-                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 50);
+                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
                         if (squidTurret && Util.CheckRoll(1))
                         {
