@@ -65,23 +65,23 @@ namespace Jessica
                         squidTurret.inventory.GiveItem(ItemIndex.Squid);
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 50);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
-                        if (squidTurret && Util.CheckRoll(5))
+                        if (squidTurret && Util.CheckRoll(1))
                         {
                             squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
                         }
-                        if (squidTurret && Util.CheckRoll(5))
+                        if (squidTurret && Util.CheckRoll(1))
                         {
                             squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
                         }
-                        if (squidTurret && Util.CheckRoll(5))
+                        if (squidTurret && Util.CheckRoll(1))
                         {
                             squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
                         }
-                        if (squidTurret && Util.CheckRoll(5))
+                        if (squidTurret && Util.CheckRoll(1))
                         {
                             squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
                         }
-                        if (squidTurret && Util.CheckRoll(5))
+                        if (squidTurret && Util.CheckRoll(1))
                         {
                             squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
                         }
@@ -91,6 +91,11 @@ namespace Jessica
                 }
             }
             orig(self, report);
+        }
+
+        public void AffixRNG()
+        {
+
         }
 
         public void Update()
