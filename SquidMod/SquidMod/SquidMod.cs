@@ -4,7 +4,6 @@ using R2API;
 using R2API.Utils;
 using UnityEngine;
 using System;
-using System.Speech.Synthesis;
 
 namespace SquidPatrol
 {
@@ -16,7 +15,6 @@ namespace SquidPatrol
         readonly string[] itemList = { "EquipmentIndex.AffixRed", "EquipmentIndex.AffixBlue", "EquipmentIndex.AffixWhite", "EquipmentIndex.AffixHaunted" };
 
         private static ItemDef squidTurretItem;
-        public EntityStateMachine outer;
 
         public void Awake()
         {
