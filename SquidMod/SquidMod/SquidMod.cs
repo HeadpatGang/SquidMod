@@ -12,6 +12,7 @@ namespace SquidPatrol
     [BepInPlugin("com.Jessica.SquidPatrol", "Squid Patrol", "1.0.0")]
     public class SquidPatrol : BaseUnityPlugin
     {
+        readonly string[] itemList = { "EquipmentIndex.AffixRed", "EquipmentIndex.AffixBlue", "EquipmentIndex.AffixWhite", "EquipmentIndex.AffixHaunted" };
         private static ItemDef squidTurretItem;
 
         public void Awake()
@@ -64,6 +65,14 @@ namespace SquidPatrol
         private void SquidSpawnLogic()
         {
 
+        }
+
+        private void AffixManip(CharacterMaster squidTurret)
+        {
+            for (int i = 0; i < itemList.Length; i++)
+            {
+                
+            }
         }
 
         private void AffixRNG(CharacterMaster squidTurret)
@@ -132,6 +141,7 @@ namespace SquidPatrol
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
                         //RNG roll, 1% chance to spawn with an affix, all rolls are indepenant, potential for multi affix memes in the future.
                         AffixRNG(squidTurret);
+                        AffixManip(squidTurret);
                     }));
                     //Finally, sending the reuqest to spawn the squid with everything so far.
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
