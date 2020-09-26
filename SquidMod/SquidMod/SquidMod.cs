@@ -16,12 +16,13 @@ namespace SquidPatrol
 
         public void Awake()
         {
-            //Defines the item to be used later on
+            //Calls all of my methods
             ItemDefinition();
             Hook();
         }
         private void ItemDefinition()
         {
+            //Defines the item to be used later on
             squidTurretItem = new ItemDef
             {
                 //R2 API Tokens
@@ -58,6 +59,35 @@ namespace SquidPatrol
         {
             //All of my hooks are going here because it's nicer to look at & easier to configure / update.
             On.RoR2.GlobalEventManager.OnCharacterDeath += GalaticAquaticAquarium;
+        }
+
+        private void SquidSpawnLogic()
+        {
+
+        }
+
+        private void AffixRNG(CharacterMaster squidTurret)
+        {
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
+            }
         }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
@@ -101,26 +131,7 @@ namespace SquidPatrol
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
                         //RNG roll, 1% chance to spawn with an affix, all rolls are indepenant, potential for multi affix memes in the future.
-                        if (squidTurret && Util.CheckRoll(1))
-                        {
-                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
-                        }
-                        if (squidTurret && Util.CheckRoll(1))
-                        {
-                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
-                        }
-                        if (squidTurret && Util.CheckRoll(1))
-                        {
-                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
-                        }
-                        if (squidTurret && Util.CheckRoll(1))
-                        {
-                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
-                        }
-                        if (squidTurret && Util.CheckRoll(1))
-                        {
-                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
-                        }
+                        AffixRNG(squidTurret);
                     }));
                     //Finally, sending the reuqest to spawn the squid with everything so far.
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
