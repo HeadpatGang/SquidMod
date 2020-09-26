@@ -66,12 +66,12 @@ namespace SquidPatrol
 
         private void Zoom()
         {
-
+            //Try give the Squid the crawler mine AI / Target Acquisition, see if I can make them atleast move. 
         }
 
         private void SquidSpawnLogic()
         {
-
+            //Will move all the spawning logic to here, eventually.
         }
 
         private void AffixRNG(CharacterMaster squidTurret)
