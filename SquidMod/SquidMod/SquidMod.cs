@@ -63,9 +63,28 @@ namespace Jessica
                     {
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.Squid);
-                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
-                        squidTurret.inventory.GiveItem(ItemIndex.Seed, 1);
+                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 50);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
+                        if (squidTurret && Util.CheckRoll(5))
+                        {
+                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
+                        }
+                        if (squidTurret && Util.CheckRoll(5))
+                        {
+                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
+                        }
+                        if (squidTurret && Util.CheckRoll(5))
+                        {
+                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
+                        }
+                        if (squidTurret && Util.CheckRoll(5))
+                        {
+                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
+                        }
+                        if (squidTurret && Util.CheckRoll(5))
+                        {
+                            squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
+                        }
                     }));
 
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
