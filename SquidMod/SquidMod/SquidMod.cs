@@ -20,7 +20,7 @@ namespace SquidPatrol
             {
                 name = "SQUID_TURRET_NAME",
                 nameToken = "SQUID_TURRET_NAME",
-                pickupToken = "SQUID_TURRET_SPAWNER_PICKUP",
+                pickupToken = "SQUID_TURRET_PICKUP",
                 descriptionToken = "SQUID_TURRET_DESC",
                 loreToken = "SQUID_TURRET_LORE",
                 tier = ItemTier.Tier3,
