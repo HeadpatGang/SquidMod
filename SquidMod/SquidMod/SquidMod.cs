@@ -3,34 +3,17 @@ using RoR2;
 using UnityEngine;
 using System;
 
-namespace Jessica
+namespace SquidPatrol
 {
     [BepInDependency("com.bepis.r2api")]
     [BepInPlugin("com.Jessica.SquidPatrol", "Squid Patrol", "1.0.0")]
-    public class TestMod : BaseUnityPlugin
+    public class SquidPatrol : BaseUnityPlugin
     {
         public void Awake()
         {
             Chat.AddMessage("Squid Patrol successfully loaded");
             Hook();
-            //ObjectiveStack();
         }
-
-        /*Archving this for later, it gets fucking stupid once it ramps.
-        public void ObjectiveStack()
-        {
-            On.EntityStates.Squid.SquidWeapon.FireSpine.OnEnter += (orig, self) =>
-            {
-                //Calls the controller to use this as a reference point to access CharachterMaster
-                PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
-                PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
-                //Uses the PlayerCharacterMasterController array above to access the master inventory (ours)
-                pcmc[0].master.inventory.GiveItem(ItemIndex.Squid);
-                //Gives the turret the firing ability back.
-                orig(self);
-            };
-        }*/
-
 
         private void Hook()
         {
@@ -91,11 +74,6 @@ namespace Jessica
                 }
             }
             orig(self, report);
-        }
-
-        public void AffixRNG()
-        {
-
         }
 
         public void Update()
