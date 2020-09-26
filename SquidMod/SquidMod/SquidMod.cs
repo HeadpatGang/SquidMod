@@ -76,27 +76,29 @@ namespace SquidPatrol
 
         private void AffixRNG(CharacterMaster squidTurret)
         {
-            if (squidTurret && Util.CheckRoll(1))
+            int squidAffix = 1;
+            switch (squidAffix)
             {
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
-            }
-            if (squidTurret && Util.CheckRoll(1))
-            {
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
-            }
-            if (squidTurret && Util.CheckRoll(1))
-            {
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
-            }
-            if (squidTurret && Util.CheckRoll(1))
-            {
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
-            }
-            if (squidTurret && Util.CheckRoll(1))
-            {
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
+                case 1:
+                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
+                    break;
+                case 2:
+                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
+                    break;
+                case 3:
+                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
+                    break;
+                case 4:
+                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
+                    break;
+                case 5:
+                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
+                    break;
+                default:
+                    break;
             }
         }
+
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
