@@ -7,6 +7,7 @@ using System;
 
 namespace SquidPatrol
 {
+
     [BepInDependency("com.bepis.r2api")]
     [R2APISubmoduleDependency(nameof(ItemAPI), nameof(ItemDropAPI), nameof(LanguageAPI))]
     [BepInPlugin("com.Jessica.SquidPatrol", "Squid Patrol", "1.0.0")]
@@ -14,11 +15,16 @@ namespace SquidPatrol
     {
         private static ItemDef squidTurretItem;
 
+        public static UnityEngine.Object Load(string path)
+        {
+            return Resources.Load(path, typeof(UnityEngine.Object));
+        }
 
         public void Awake()
         {
             //Calls all of my methods
             ItemDefinition();
+            IceMines();
             Hook();
         }
 
@@ -34,7 +40,7 @@ namespace SquidPatrol
                 descriptionToken = "SQUID_TURRET_DESC",
                 loreToken = "SQUID_TURRET_LORE",
                 //Makes it Red Tier
-                tier = ItemTier.Tier3,
+                tier = ItemTier.Lunar,
                 //Default Squid stuff at the moment, custom stuff soonTM?
                 pickupModelPath = "Prefabs/PickupModels/PickupSquidTurret",
                 pickupIconPath = "Textures/ItemIcons/texSquidTurretIcon",
@@ -65,7 +71,12 @@ namespace SquidPatrol
 
         private void Zoom()
         {
-            //Try give the Squid the crawler mine AI / Target Acquisition, see if I can make them atleast move. 
+            /*
+            Try give the Squid the spider mine AI / Target Acquisition, see if I can make them atleast move. 
+            squidTurret.AI.SpiderCrawler;
+            squidTurretItem.inventory.SetEquipmentIndex.AffixWhite;
+            squidTurretItem.HP.0;
+            */
         }
 
         private void HowManySquidsCanYouFitInAParty()
@@ -75,35 +86,48 @@ namespace SquidPatrol
 
         private void AffixRNG(CharacterMaster squidTurret)
         {
-            if (squidTurret && Util.CheckRoll(1))
+            bool squidRolled = true;
+            if (squidRolled = true && Util.CheckRoll(20))
             {
+                Chat.AddMessage("Blazing Squid Spawned");
                 squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
+                squidRolled = false;
             }
-            if (squidTurret && Util.CheckRoll(1))
+            if (squidTurret && Util.CheckRoll(20))
             {
+                Chat.AddMessage("Overloading Squid Spawned");
                 squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
             }
-            if (squidTurret && Util.CheckRoll(1))
+            if (squidTurret && Util.CheckRoll(20))
             {
+                Chat.AddMessage("Glacial Squid Spawned");
                 squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
             }
-            if (squidTurret && Util.CheckRoll(1))
+            if (squidTurret && Util.CheckRoll(20))
             {
+                Chat.AddMessage("Celestial Squid Spawned");
                 squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
             }
-            if (squidTurret && Util.CheckRoll(1))
+            if (squidTurret && Util.CheckRoll(20))
             {
+                Chat.AddMessage("Malachite Squid Spawned");
                 squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
             }
         }
 
-        private void ForAffix(CharacterMaster squidTurret)
-        {
-
-        }
-
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
+            var squidTeam =TeamIndex.Neutral;
+            if (Util.CheckRoll(50))
+            {
+                Chat.AddMessage("Enemy Spawned");
+                squidTeam = TeamIndex.Monster;
+            }
+            else
+            {
+                Chat.AddMessage("Friendly Spawned");
+                squidTeam = TeamIndex.Player;
+            }
             //If I am null or the report is null, do nothing.
             if (self is null) return;
             if (report is null) return;
@@ -130,7 +154,7 @@ namespace SquidPatrol
                     //Index is set to player so it doesn't kill the player.
                     DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, RoR2Application.rng)
                     {
-                        teamIndexOverride = TeamIndex.Neutral
+                        teamIndexOverride = squidTeam
                     };
                     //Creates a secondary spawn request that mimics the first ones properties, just this time adding items into the spawn request.
                     //Can potentially be brought down into one spawn request.
@@ -141,10 +165,10 @@ namespace SquidPatrol
                         //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
+                        squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
                         //RNG roll, 1% chance to spawn with an affix, all rolls are indepenant, potential for multi affix memes in the future.
                         AffixRNG(squidTurret);
-                        ForAffix(squidTurret);
                     }));
                     //Finally, sending the reuqest to spawn the squid with everything so far.
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
@@ -176,5 +200,18 @@ namespace SquidPatrol
             };
         }
 
+        private void IceMines()
+        {
+            On.EntityStates.Engi.SpiderMine.Detonate.OnEnter += (orig, self) =>
+            {
+                Vector3 corePosition = Util.GetCorePosition(gameObject);
+                GameObject spiderMine = UnityEngine.Object.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/NetworkedObjects/GenericDelayBlast"), corePosition, Quaternion.identity);
+                DelayBlast component = spiderMine.GetComponent<DelayBlast>();
+                component.explosionEffect = Resources.Load<GameObject>("Prefabs/Effects/ImpactEffects/AffixWhiteExplosion");
+                component.delayEffect = Resources.Load<GameObject>("Prefabs/Effects/AffixWhiteDelayEffect");
+                spiderMine.GetComponent<TeamFilter>().teamIndex = TeamComponent.GetObjectTeam(component.attacker);
+                orig(self);
+            };
+        }
     }
 }
