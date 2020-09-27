@@ -12,9 +12,8 @@ namespace SquidPatrol
     [BepInPlugin("com.Jessica.SquidPatrol", "Squid Patrol", "1.0.0")]
     public class SquidPatrol : BaseUnityPlugin
     {
-        readonly string[] itemList = { "EquipmentIndex.AffixRed", "EquipmentIndex.AffixBlue", "EquipmentIndex.AffixWhite", "EquipmentIndex.AffixHaunted" };
-
         private static ItemDef squidTurretItem;
+
 
         public void Awake()
         {
@@ -69,36 +68,39 @@ namespace SquidPatrol
             //Try give the Squid the crawler mine AI / Target Acquisition, see if I can make them atleast move. 
         }
 
-        private void SquidSpawnLogic()
+        private void HowManySquidsCanYouFitInAParty()
         {
             //Will move all the spawning logic to here, eventually.
         }
 
         private void AffixRNG(CharacterMaster squidTurret)
         {
-            int squidAffix = 1;
-            switch (squidAffix)
+            if (squidTurret && Util.CheckRoll(1))
             {
-                case 1:
-                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
-                    break;
-                case 2:
-                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
-                    break;
-                case 3:
-                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
-                    break;
-                case 4:
-                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
-                    break;
-                case 5:
-                    squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
-                    break;
-                default:
-                    break;
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
+            }
+            if (squidTurret && Util.CheckRoll(1))
+            {
+                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
             }
         }
 
+        private void ForAffix(CharacterMaster squidTurret)
+        {
+
+        }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
@@ -128,7 +130,7 @@ namespace SquidPatrol
                     //Index is set to player so it doesn't kill the player.
                     DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, RoR2Application.rng)
                     {
-                        teamIndexOverride = TeamIndex.Player
+                        teamIndexOverride = TeamIndex.Neutral
                     };
                     //Creates a secondary spawn request that mimics the first ones properties, just this time adding items into the spawn request.
                     //Can potentially be brought down into one spawn request.
@@ -142,6 +144,7 @@ namespace SquidPatrol
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
                         //RNG roll, 1% chance to spawn with an affix, all rolls are indepenant, potential for multi affix memes in the future.
                         AffixRNG(squidTurret);
+                        ForAffix(squidTurret);
                     }));
                     //Finally, sending the reuqest to spawn the squid with everything so far.
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
@@ -172,5 +175,6 @@ namespace SquidPatrol
 
             };
         }
+
     }
 }
