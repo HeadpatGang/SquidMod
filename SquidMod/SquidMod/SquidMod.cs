@@ -94,7 +94,7 @@ namespace SquidPatrol
         {
             if (report.attackerBody.inventory)
             {
-                int squidCheck = 105 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
+                int squidCheck = 5 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
                 var squidTeam = Util.CheckRoll(squidCheck) ? TeamIndex.Monster : TeamIndex.Player;
                 //If I am null or the report is null, do nothing.
                 if (self is null) return;
@@ -138,7 +138,7 @@ namespace SquidPatrol
                         {
                             squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
                         }
-                        if (Util.CheckRoll(100))
+                        if (Util.CheckRoll(1))
                         {
                             squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
                             foreach (var buff in SquidBuffIndex)
