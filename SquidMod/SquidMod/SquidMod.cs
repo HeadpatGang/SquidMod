@@ -76,64 +76,67 @@ namespace SquidPatrol
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
-            PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
-            PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
-            int HowManySquidsAreInYourPocket = pcmc[0].master.inventory.GetItemCount(squidTurretItem.itemIndex);
-            var squidTeam = TeamIndex.Neutral;
-            if (Util.CheckRoll( 5 - HowManySquidsAreInYourPocket))
+            CharacterBody attackerBody = report.attackerBody;
+            if (attackerBody.inventory)
             {
-                squidTeam = TeamIndex.Monster;
-            }
-            else
-            {
-                squidTeam = TeamIndex.Player;
-            }
-            //If I am null or the report is null, do nothing.
-            if (self is null) return;
-            if (report is null) return;
-            //If there's a victim & an attacker start the spawning process (basically on kill)
-            if (report.victimBody && report.attacker)
-            {
+                PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
+                PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
+                int HowManySquidsAreInYourPocket = pcmc[0].master.inventory.GetItemCount(squidTurretItem.itemIndex);
+                var squidTeam = TeamIndex.Neutral;
+                if (Util.CheckRoll( 5 - HowManySquidsAreInYourPocket))
+                {
+                    squidTeam = TeamIndex.Monster;
+                }
+                else
+                {
+                    squidTeam = TeamIndex.Player;
+                }
+                //If I am null or the report is null, do nothing.
+                if (self is null) return;
+                if (report is null) return;
+                //If there's a victim & an attacker start the spawning process (basically on kill)
+                if (report.victimBody && report.attacker)
+                {
                 //Start a counter for how many Deadman Friend's are in the players inventory. (rename to deadmanCounter maybe?)
                 int squidCounter = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
-                //If the counter is above 0, start preparing for spawning a squid.
-                if (squidCounter > 0)
-                {
-                    //Spawn card is just what's being spawned, in this case it's a Squid Turret
-                    SpawnCard spawnCard = Resources.Load<CharacterSpawnCard>("SpawnCards/CharacterSpawnCards/cscSquidTurret");
-                    //Placement rule is how far from the body the squid can spawn
-                    DirectorPlacementRule placementRule = new DirectorPlacementRule
+                    if (squidCounter > 0)
                     {
-                        placementMode = DirectorPlacementRule.PlacementMode.Approximate,
-                        minDistance = 5f,
-                        maxDistance = 25f,
-                        spawnOnTarget = report.victimBody.transform,
-                    };
-                    //Starts the spawning request using everything created so far
-                    //Spawn card for what's being spawned, PlacementRule for where it's being spawned.
-                    //Index is set to player so it doesn't kill the player.
-                    DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, RoR2Application.rng)
-                    {
-                        teamIndexOverride = squidTeam
-                    };
-                    //Creates a secondary spawn request that mimics the first ones properties, just this time adding items into the spawn request.
-                    //Can potentially be brought down into one spawn request.
-                    DirectorSpawnRequest directorSpawnRequest2 = directorSpawnRequest;
-                    directorSpawnRequest2.onSpawnedServer = (Action<SpawnCard.SpawnResult>)Delegate.Combine(directorSpawnRequest2.onSpawnedServer, new Action<SpawnCard.SpawnResult>(delegate (SpawnCard.SpawnResult result)
-                    {
-                        //Gets the squids inventory from the spawned instance that had occured
-                        //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
-                        CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
-                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
-                        squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
-                        squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
-                        if (Util.CheckRoll(1))
+                        //Spawn card is just what's being spawned, in this case it's a Squid Turret
+                        SpawnCard spawnCard = Resources.Load<CharacterSpawnCard>("SpawnCards/CharacterSpawnCards/cscSquidTurret");
+                        //Placement rule is how far from the body the squid can spawn
+                        DirectorPlacementRule placementRule = new DirectorPlacementRule
                         {
-                            squidTurret.inventory.SetEquipmentIndex(AffixIndex[UnityEngine.Random.Range(0, 5)]);
-                        }
-                    }));
-                    //Finally, sending the reuqest to spawn the squid with everything so far.
-                    DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
+                            placementMode = DirectorPlacementRule.PlacementMode.Approximate,
+                            minDistance = 5f,
+                            maxDistance = 25f,
+                            spawnOnTarget = report.victimBody.transform,
+                        };
+                        //Starts the spawning request using everything created so far
+                        //Spawn card for what's being spawned, PlacementRule for where it's being spawned.
+                        //Index is set to player so it doesn't kill the player.
+                        DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, RoR2Application.rng)
+                        {
+                            teamIndexOverride = squidTeam
+                        };
+                        //Creates a secondary spawn request that mimics the first ones properties, just this time adding items into the spawn request.
+                        //Can potentially be brought down into one spawn request.
+                        DirectorSpawnRequest directorSpawnRequest2 = directorSpawnRequest;
+                        directorSpawnRequest2.onSpawnedServer = (Action<SpawnCard.SpawnResult>)Delegate.Combine(directorSpawnRequest2.onSpawnedServer, new Action<SpawnCard.SpawnResult>(delegate (SpawnCard.SpawnResult result)
+                        {
+                            //Gets the squids inventory from the spawned instance that had occured
+                            //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
+                            CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
+                            squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
+                            squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
+                            squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
+                            if (Util.CheckRoll(1))
+                            {
+                                squidTurret.inventory.SetEquipmentIndex(AffixIndex[UnityEngine.Random.Range(0, 5)]);
+                            }
+                        }));
+                        //Finally, sending the reuqest to spawn the squid with everything so far.
+                        DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
+                    }
                 }
             }
             //Since it's a hook, it needs to be restored to its original point & that's done here.
