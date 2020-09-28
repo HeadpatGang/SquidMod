@@ -119,7 +119,7 @@ namespace SquidPatrol
                             squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                             squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
                             squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
-                            if (Util.CheckRoll(100))
+                            if (Util.CheckRoll(1))
                             {
                                 squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, 0)]);
                             }
