@@ -21,7 +21,6 @@ namespace SquidPatrol
     public class SquidPatrol : BaseUnityPlugin
     {
         private static ItemDef squidTurretItem;
-        readonly EquipmentIndex[] AffixIndex = { EquipmentIndex.AffixRed, EquipmentIndex.AffixBlue, EquipmentIndex.AffixWhite, EquipmentIndex.AffixHaunted, EquipmentIndex.AffixPoison };
         readonly List<BuffIndex> SquidBuffIndex = new List<BuffIndex>();
         readonly ItemIndex[] SquidIndex = { ItemIndex.InvadingDoppelganger };
 
