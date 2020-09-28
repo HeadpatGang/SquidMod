@@ -4,6 +4,13 @@ using R2API;
 using R2API.Utils;
 using UnityEngine;
 using System;
+using System.Security;
+using System.Security.Permissions;
+using System.Collections.Generic;
+using Random = UnityEngine.Random;
+
+[module: UnverifiableCode]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 
 namespace SquidPatrol
 {
@@ -14,6 +21,7 @@ namespace SquidPatrol
     public class SquidPatrol : BaseUnityPlugin
     {
         private static ItemDef squidTurretItem;
+        readonly EquipmentIndex[] AffixIndex = { EquipmentIndex.AffixRed, EquipmentIndex.AffixBlue, EquipmentIndex.AffixWhite, EquipmentIndex.AffixHaunted, EquipmentIndex.AffixPoison };
 
         public static UnityEngine.Object Load(string path)
         {
@@ -24,7 +32,6 @@ namespace SquidPatrol
         {
             //Calls all of my methods
             ItemDefinition();
-            IceMines();
             Hook();
         }
 
@@ -67,6 +74,7 @@ namespace SquidPatrol
         {
             //All of my hooks are going here because it's nicer to look at & easier to configure / update.
             On.RoR2.GlobalEventManager.OnCharacterDeath += GalaticAquaticAquarium;
+            On.EntityStates.Engi.SpiderMine.Detonate.OnEnter += IceMines;
         }
 
         private void Zoom()
@@ -82,37 +90,6 @@ namespace SquidPatrol
         private void HowManySquidsCanYouFitInAParty()
         {
             //Will move all the spawning logic to here, eventually.
-        }
-
-        private void AffixRNG(CharacterMaster squidTurret)
-        {
-            bool squidRolled = true;
-            if (squidRolled = true && Util.CheckRoll(20))
-            {
-                Chat.AddMessage("Blazing Squid Spawned");
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixRed);
-                squidRolled = false;
-            }
-            if (squidTurret && Util.CheckRoll(20))
-            {
-                Chat.AddMessage("Overloading Squid Spawned");
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixBlue);
-            }
-            if (squidTurret && Util.CheckRoll(20))
-            {
-                Chat.AddMessage("Glacial Squid Spawned");
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixWhite);
-            }
-            if (squidTurret && Util.CheckRoll(20))
-            {
-                Chat.AddMessage("Celestial Squid Spawned");
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixHaunted);
-            }
-            if (squidTurret && Util.CheckRoll(20))
-            {
-                Chat.AddMessage("Malachite Squid Spawned");
-                squidTurret.inventory.SetEquipmentIndex(EquipmentIndex.AffixPoison);
-            }
         }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
@@ -167,8 +144,10 @@ namespace SquidPatrol
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                         squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
-                        //RNG roll, 1% chance to spawn with an affix, all rolls are indepenant, potential for multi affix memes in the future.
-                        AffixRNG(squidTurret);
+                        if (Util.CheckRoll(1))
+                        {
+                            squidTurret.inventory.SetEquipmentIndex(AffixIndex[UnityEngine.Random.Range(0, 5)]);
+                        }
                     }));
                     //Finally, sending the reuqest to spawn the squid with everything so far.
                     DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
@@ -200,18 +179,12 @@ namespace SquidPatrol
             };
         }
 
-        private void IceMines()
+        private void IceMines(On.EntityStates.Engi.SpiderMine.Detonate.orig_OnEnter orig, EntityStates.Engi.SpiderMine.Detonate self)
         {
-            On.EntityStates.Engi.SpiderMine.Detonate.OnEnter += (orig, self) =>
-            {
-                Vector3 corePosition = Util.GetCorePosition(gameObject);
-                GameObject spiderMine = UnityEngine.Object.Instantiate<GameObject>(Resources.Load<GameObject>("Prefabs/NetworkedObjects/GenericDelayBlast"), corePosition, Quaternion.identity);
-                DelayBlast component = spiderMine.GetComponent<DelayBlast>();
-                component.explosionEffect = Resources.Load<GameObject>("Prefabs/Effects/ImpactEffects/AffixWhiteExplosion");
-                component.delayEffect = Resources.Load<GameObject>("Prefabs/Effects/AffixWhiteDelayEffect");
-                spiderMine.GetComponent<TeamFilter>().teamIndex = TeamComponent.GetObjectTeam(component.attacker);
-                orig(self);
-            };
+            var ptr = typeof(EntityStates.Engi.SpiderMine.BaseSpiderMineState).GetMethod("OnEnter").MethodHandle.GetFunctionPointer();
+            var baseOnEnter = (Action)Activator.CreateInstance(typeof(Action), self, ptr);
+            baseOnEnter();
+            orig(self);
         }
     }
 }
