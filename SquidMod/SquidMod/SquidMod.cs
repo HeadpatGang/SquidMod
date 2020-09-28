@@ -65,7 +65,7 @@ namespace SquidPatrol
             //All of our previously defined tokens are being added onto the item.
             R2API.LanguageAPI.Add("SQUID_TURRET_NAME", "Deadmans Friend");
             R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawn a Squid on Kill");
-            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Whenever you <style=cIsDamage> kill an enemy</style> you have a <style=cIsUtility>1%</style> chance to spawn a Squid with an Affix.");
+            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Killing an enemy spawns a Squid <style=cIsUtility> 5% Chance </style> to become <style=cDeath> Hostile </style> <style=cStack> -1% per Stack </style> \n <style=cArtifact> 1% Chance for an Affix </style>.(Blazing, Glacial, Overloading, Malachite, Celestial, Umbral)");
             R2API.LanguageAPI.Add("SQUID_TURRET_LORE", "One squid in the ocean is worth a thousand on land.");
         }
 
@@ -117,11 +117,10 @@ namespace SquidPatrol
                             //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
                             CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                             squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
-                            squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
                             squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
                             if (Util.CheckRoll(1))
                             {
-                                squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, 0)]);
+                                squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, 2)]);
                             }
                             if (Util.CheckRoll(1))
                             {
@@ -145,18 +144,6 @@ namespace SquidPatrol
             {
                 var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
                 PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(squidTurretItem.itemIndex), transform.position, transform.forward * 20f);
-            };
-
-            if (Input.GetKeyDown(KeyCode.F2))
-            {
-                //This function is taking a copy of PlayerCharacterMasterController & copying it into pcmc
-                //pcmc is then accessing the inventory of the player & spawning in a Deadmans Friend & a Dio's Best Friend
-                PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
-                PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.Squid);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.ExtraLife);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.InvadingDoppelganger);
-
             };
         }
    
