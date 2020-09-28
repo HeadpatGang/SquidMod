@@ -85,9 +85,9 @@ namespace SquidPatrol
                 //If there's a victim & an attacker start the spawning process (basically on kill)
                 if (report.victimBody && report.attacker)
                 {
-                //Start a counter for how many Deadman Friend's are in the players inventory. (rename to deadmanCounter maybe?)
-                int squidCounter = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
-                    if (squidCounter > 0)
+                    //Start a counter for how many Deadman Friend's are in the players inventory. (rename to deadmanCounter maybe?)
+                 int HowManySquidsAreInYourPocket = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
+                    if (HowManySquidsAreInYourPocket > 0)
                     {
                         //Spawn card is just what's being spawned, in this case it's a Squid Turret
                         SpawnCard spawnCard = Resources.Load<CharacterSpawnCard>("SpawnCards/CharacterSpawnCards/cscSquidTurret");
@@ -116,7 +116,7 @@ namespace SquidPatrol
                             CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                             squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                             squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
-                            squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * squidCounter);
+                            squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
                             if (Util.CheckRoll(1))
                             {
                                 squidTurret.inventory.SetEquipmentIndex(AffixIndex[UnityEngine.Random.Range(0, 5)]);
@@ -149,6 +149,7 @@ namespace SquidPatrol
                 PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
                 pcmc[0].master.inventory.GiveItem(ItemIndex.Squid);
                 pcmc[0].master.inventory.GiveItem(ItemIndex.ExtraLife);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.InvadingDoppelganger);
 
             };
         }
