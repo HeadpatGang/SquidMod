@@ -72,7 +72,6 @@ namespace SquidPatrol
         {
             //All of my hooks are going here because it's nicer to look at & easier to configure / update.
             On.RoR2.GlobalEventManager.OnCharacterDeath += GalaticAquaticAquarium;
-            On.EntityStates.Engi.SpiderMine.Detonate.OnEnter += IceMines;
         }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
