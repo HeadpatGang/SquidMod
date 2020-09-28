@@ -33,6 +33,7 @@ namespace SquidPatrol
         {
             //Calls all of my methods
             ItemDefinition();
+            JackedSquidsGettingBuffed();
             Hook();
         }
 
