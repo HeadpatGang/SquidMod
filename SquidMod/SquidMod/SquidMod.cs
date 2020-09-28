@@ -6,8 +6,6 @@ using UnityEngine;
 using System;
 using System.Security;
 using System.Security.Permissions;
-using System.Collections.Generic;
-using Random = UnityEngine.Random;
 
 [module: UnverifiableCode]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
@@ -75,21 +73,6 @@ namespace SquidPatrol
             //All of my hooks are going here because it's nicer to look at & easier to configure / update.
             On.RoR2.GlobalEventManager.OnCharacterDeath += GalaticAquaticAquarium;
             On.EntityStates.Engi.SpiderMine.Detonate.OnEnter += IceMines;
-        }
-
-        private void Zoom()
-        {
-            /*
-            Try give the Squid the spider mine AI / Target Acquisition, see if I can make them atleast move. 
-            squidTurret.AI.SpiderCrawler;
-            squidTurretItem.inventory.SetEquipmentIndex.AffixWhite;
-            squidTurretItem.HP.0;
-            */
-        }
-
-        private void HowManySquidsCanYouFitInAParty()
-        {
-            //Will move all the spawning logic to here, eventually.
         }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
@@ -178,13 +161,6 @@ namespace SquidPatrol
 
             };
         }
-
-        private void IceMines(On.EntityStates.Engi.SpiderMine.Detonate.orig_OnEnter orig, EntityStates.Engi.SpiderMine.Detonate self)
-        {
-            var ptr = typeof(EntityStates.Engi.SpiderMine.BaseSpiderMineState).GetMethod("OnEnter").MethodHandle.GetFunctionPointer();
-            var baseOnEnter = (Action)Activator.CreateInstance(typeof(Action), self, ptr);
-            baseOnEnter();
-            orig(self);
-        }
+   
     }
 }
