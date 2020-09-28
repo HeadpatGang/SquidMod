@@ -45,7 +45,8 @@ namespace SquidPatrol
                 foreach (BuffIndex buff in BuffCatalog.eliteBuffIndices)
                 {
                     SquidBuffIndex.Add(buff);
-                }; orig(self);
+                };
+                orig(self);
             };
         }
 
@@ -141,10 +142,6 @@ namespace SquidPatrol
                         if (Util.CheckRoll(1))
                         {
                             squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
-                            foreach (var buff in SquidBuffIndex)
-                                {
-                                    Debug.Log(buff.ToString());
-                                }
                             }
                         }));
                         //Finally, sending the reuqest to spawn the squid with everything so far.
