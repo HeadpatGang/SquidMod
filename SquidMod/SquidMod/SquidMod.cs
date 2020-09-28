@@ -20,6 +20,7 @@ namespace SquidPatrol
     {
         private static ItemDef squidTurretItem;
         readonly EquipmentIndex[] AffixIndex = { EquipmentIndex.AffixRed, EquipmentIndex.AffixBlue, EquipmentIndex.AffixWhite, EquipmentIndex.AffixHaunted, EquipmentIndex.AffixPoison };
+        readonly ItemIndex[] SquidIndex = { ItemIndex.InvadingDoppelganger };
 
         public static UnityEngine.Object Load(string path)
         {
@@ -78,7 +79,8 @@ namespace SquidPatrol
         {
             if (report.attackerBody.inventory)
             {
-                var squidTeam = Util.CheckRoll(5 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex)) ? TeamIndex.Monster : TeamIndex.Player;
+                int squidCheck = 5 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
+                var squidTeam = Util.CheckRoll(squidCheck) ? TeamIndex.Monster : TeamIndex.Player;
                 //If I am null or the report is null, do nothing.
                 if (self is null) return;
                 if (report is null) return;
@@ -117,6 +119,10 @@ namespace SquidPatrol
                             squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                             squidTurret.inventory.GiveItem(squidTurretItem.itemIndex);
                             squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
+                            if (Util.CheckRoll(100))
+                            {
+                                squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, 0)]);
+                            }
                             if (Util.CheckRoll(1))
                             {
                                 squidTurret.inventory.SetEquipmentIndex(AffixIndex[UnityEngine.Random.Range(0, 5)]);
