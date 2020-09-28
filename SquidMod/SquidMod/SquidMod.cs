@@ -76,21 +76,9 @@ namespace SquidPatrol
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
-            CharacterBody attackerBody = report.attackerBody;
-            if (attackerBody.inventory)
+            if (report.attackerBody.inventory)
             {
-                PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
-                PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
-                int HowManySquidsAreInYourPocket = pcmc[0].master.inventory.GetItemCount(squidTurretItem.itemIndex);
-                var squidTeam = TeamIndex.Neutral;
-                if (Util.CheckRoll( 5 - HowManySquidsAreInYourPocket))
-                {
-                    squidTeam = TeamIndex.Monster;
-                }
-                else
-                {
-                    squidTeam = TeamIndex.Player;
-                }
+                var squidTeam = Util.CheckRoll(5 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex)) ? TeamIndex.Monster : TeamIndex.Player;
                 //If I am null or the report is null, do nothing.
                 if (self is null) return;
                 if (report is null) return;
