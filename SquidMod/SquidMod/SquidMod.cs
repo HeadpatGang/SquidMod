@@ -45,7 +45,7 @@ namespace SquidPatrol
                 {
                     SquidBuffIndex.Clear();
                     SquidBuffIndex.Add(buff);
-                };
+                }; orig(self);
             };
         }
 
@@ -94,7 +94,7 @@ namespace SquidPatrol
         {
             if (report.attackerBody.inventory)
             {
-                int squidCheck = 5 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
+                int squidCheck = 105 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
                 var squidTeam = Util.CheckRoll(squidCheck) ? TeamIndex.Monster : TeamIndex.Player;
                 //If I am null or the report is null, do nothing.
                 if (self is null) return;
@@ -132,14 +132,15 @@ namespace SquidPatrol
                         //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
+                        squidTurret.inventory.GiveItem(squidTurretItem.itemIndex, 30);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
                         if (Util.CheckRoll(1))
                         {
                             squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, SquidIndex.Count())]);
                         }
-                        if (Util.CheckRoll(1))
+                        if (Util.CheckRoll(100))
                         {
-                            squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
+                            squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidIndex.Count())]);
                             }
                         }));
                         //Finally, sending the reuqest to spawn the squid with everything so far.
