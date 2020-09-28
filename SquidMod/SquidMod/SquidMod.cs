@@ -6,6 +6,8 @@ using UnityEngine;
 using System;
 using System.Security;
 using System.Security.Permissions;
+using System.Collections.Generic;
+using System.Linq;
 
 [module: UnverifiableCode]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
@@ -20,6 +22,7 @@ namespace SquidPatrol
     {
         private static ItemDef squidTurretItem;
         readonly EquipmentIndex[] AffixIndex = { EquipmentIndex.AffixRed, EquipmentIndex.AffixBlue, EquipmentIndex.AffixWhite, EquipmentIndex.AffixHaunted, EquipmentIndex.AffixPoison };
+        readonly List<BuffIndex> SquidBuffIndex = new List<BuffIndex>();
         readonly ItemIndex[] SquidIndex = { ItemIndex.InvadingDoppelganger };
 
         public static UnityEngine.Object Load(string path)
@@ -32,6 +35,18 @@ namespace SquidPatrol
             //Calls all of my methods
             ItemDefinition();
             Hook();
+        }
+
+        private void JackedSquidsGettingBuffed()
+        {
+            On.RoR2.Run.Start += (orig, self) =>
+            {
+                foreach (BuffIndex buff in BuffCatalog.eliteBuffIndices)
+                {
+                    SquidBuffIndex.Clear();
+                    SquidBuffIndex.Add(buff);
+                };
+            };
         }
 
         private void ItemDefinition()
@@ -64,7 +79,7 @@ namespace SquidPatrol
         {
             //All of our previously defined tokens are being added onto the item.
             R2API.LanguageAPI.Add("SQUID_TURRET_NAME", "Deadmans Friend");
-            R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawns a Squid Polyp on Kill. \n <style=cIsUtility> 5% Chance </style> to become <style=cDeath> Hostile </style>");
+            R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawns a Squid Polyp on Kill. <style=cIsUtility> 5% Chance </style> to become <style=cDeath> Hostile </style>");
             R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Killing an enemy spawns a Squid Polyp with a 1% chance to become <style=cArtifact> Elite </style>, but <style=cIsUtility> 5% Chance </style> <style=cStack> (-1% per stack) </style> to become <style=cDeath> Hostile </style>.");
             R2API.LanguageAPI.Add("SQUID_TURRET_LORE", "One squid in the ocean is worth a thousand on land.");
         }
@@ -113,18 +128,18 @@ namespace SquidPatrol
                         DirectorSpawnRequest directorSpawnRequest2 = directorSpawnRequest;
                         directorSpawnRequest2.onSpawnedServer = (Action<SpawnCard.SpawnResult>)Delegate.Combine(directorSpawnRequest2.onSpawnedServer, new Action<SpawnCard.SpawnResult>(delegate (SpawnCard.SpawnResult result)
                         {
-                            //Gets the squids inventory from the spawned instance that had occured
-                            //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
-                            CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
-                            squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
-                            squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
-                            if (Util.CheckRoll(1))
-                            {
-                                squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, 0)]);
-                            }
-                            if (Util.CheckRoll(1))
-                            {
-                                squidTurret.inventory.SetEquipmentIndex(AffixIndex[UnityEngine.Random.Range(0, 5)]);
+                        //Gets the squids inventory from the spawned instance that had occured
+                        //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
+                        CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
+                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
+                        squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
+                        if (Util.CheckRoll(1))
+                        {
+                            squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, SquidIndex.Count())]);
+                        }
+                        if (Util.CheckRoll(1))
+                        {
+                            squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
                             }
                         }));
                         //Finally, sending the reuqest to spawn the squid with everything so far.
