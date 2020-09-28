@@ -22,7 +22,7 @@ namespace SquidPatrol
     {
         private static ItemDef squidTurretItem;
         readonly List<BuffIndex> SquidBuffIndex = new List<BuffIndex>();
-        readonly ItemIndex[] SquidIndex = { ItemIndex.InvadingDoppelganger };
+        readonly ItemIndex[] SquidItemIndex = { ItemIndex.InvadingDoppelganger };
 
         public static UnityEngine.Object Load(string path)
         {
@@ -136,11 +136,11 @@ namespace SquidPatrol
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
                         if (Util.CheckRoll(1))
                         {
-                            squidTurret.inventory.GiveItem(SquidIndex[UnityEngine.Random.Range(0, SquidIndex.Count())]);
+                            squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
                         }
                         if (Util.CheckRoll(100))
                         {
-                            squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidIndex.Count())]);
+                            squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
                             }
                         }));
                         //Finally, sending the reuqest to spawn the squid with everything so far.
