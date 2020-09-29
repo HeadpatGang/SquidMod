@@ -96,9 +96,7 @@ namespace SquidPatrol
         private void AdoptASquidToday(CharacterMaster squidTurret)
         {
             MinionOwnership squidOwner = GetComponent<MinionOwnership>();
-            CharacterMaster newSquidOwner = GetComponent<CharacterMaster>();
-            
-            
+            CharacterMaster newSquidOwner = GetComponent<CharacterMaster>(); 
         }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
