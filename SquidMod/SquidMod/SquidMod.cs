@@ -17,7 +17,6 @@ namespace SquidPatrol
 
     [BepInDependency("com.bepis.r2api")]
     [R2APISubmoduleDependency(nameof(ItemAPI), nameof(ItemDropAPI), nameof(LanguageAPI))]
-    [R2APISubmoduleDependency(nameof(CommandHelper))]
     [BepInPlugin("com.Jessica.SquidPatrol", "Squid Patrol", "1.0.0")]
     public class SquidPatrol : BaseUnityPlugin
     {
@@ -95,8 +94,8 @@ namespace SquidPatrol
 
         private void AdoptASquidToday(CharacterMaster squidTurret)
         {
-            MinionOwnership squidOwner = GetComponent<MinionOwnership>();
-            CharacterMaster newSquidOwner = GetComponent<CharacterMaster>(); 
+            MasterSummon masterSummon = new MasterSummon();
+            CharacterBody ownerBody = new CharacterBody();
         }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
@@ -140,6 +139,7 @@ namespace SquidPatrol
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
+                        squidTurret.inventory.CopyItemsFrom(report.attackerBody.inventory);
                         if (Util.CheckRoll(1))
                         {
                             squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
@@ -147,7 +147,7 @@ namespace SquidPatrol
                         if (Util.CheckRoll(1))
                         {
                             squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
-                            }
+                         }
                         AdoptASquidToday(squidTurret);
                         }));
                         //Finally, sending the request to spawn the squid with everything so far.
@@ -166,6 +166,19 @@ namespace SquidPatrol
             {
                 var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
                 PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(squidTurretItem.itemIndex), transform.position, transform.forward * 20f);
+            };
+
+            if (Input.GetKeyDown(KeyCode.F2))
+            {
+                //This function is taking a copy of PlayerCharacterMasterController & copying it into pcmc
+                //pcmc is then accessing the inventory of the player & spawning in a Deadmans Friend & a Dio's Best Friend
+                PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
+                PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.CaptainDefenseMatrix, 5);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.CritGlasses, 10);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.BleedOnHit, 5);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.BleedOnHitAndExplode, 5);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.Clover, 5);
             };
         }
     }
