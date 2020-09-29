@@ -17,6 +17,7 @@ namespace SquidPatrol
 
     [BepInDependency("com.bepis.r2api")]
     [R2APISubmoduleDependency(nameof(ItemAPI), nameof(ItemDropAPI), nameof(LanguageAPI))]
+    [R2APISubmoduleDependency(nameof(CommandHelper))]
     [BepInPlugin("com.Jessica.SquidPatrol", "Squid Patrol", "1.0.0")]
     public class SquidPatrol : BaseUnityPlugin
     {
@@ -34,20 +35,8 @@ namespace SquidPatrol
             //Calls all of my methods
             ItemDefinition();
             JackedSquidsGettingBuffed();
+            R2API.Utils.CommandHelper.AddToConsoleWhenReady();
             Hook();
-        }
-
-        private void JackedSquidsGettingBuffed()
-        {
-            On.RoR2.Run.Start += (orig, self) =>
-            {
-                SquidBuffIndex.Clear();
-                foreach (BuffIndex buff in BuffCatalog.eliteBuffIndices)
-                {
-                    SquidBuffIndex.Add(buff);
-                };
-                orig(self);
-            };
         }
 
         private void ItemDefinition()
@@ -91,6 +80,27 @@ namespace SquidPatrol
             On.RoR2.GlobalEventManager.OnCharacterDeath += GalaticAquaticAquarium;
         }
 
+        private void JackedSquidsGettingBuffed()
+        {
+            On.RoR2.Run.Start += (orig, self) =>
+            {
+                SquidBuffIndex.Clear();
+                foreach (BuffIndex buff in BuffCatalog.eliteBuffIndices)
+                {
+                    SquidBuffIndex.Add(buff);
+                };
+                orig(self);
+            };
+        }
+
+        private void AdoptASquidToday(CharacterMaster squidTurret)
+        {
+            MinionOwnership squidOwner = GetComponent<MinionOwnership>();
+            CharacterMaster newSquidOwner = GetComponent<CharacterMaster>();
+            
+            
+        }
+
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
             if (report.attackerBody.inventory)
@@ -103,7 +113,6 @@ namespace SquidPatrol
                 //If there's a victim & an attacker start the spawning process (basically on kill)
                 if (report.victimBody && report.attacker)
                 {
-                    //Start a counter for how many Deadman Friend's are in the players inventory. (rename to deadmanCounter maybe?)
                  int HowManySquidsAreInYourPocket = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
                     if (HowManySquidsAreInYourPocket > 0)
                     {
@@ -119,7 +128,6 @@ namespace SquidPatrol
                         };
                         //Starts the spawning request using everything created so far
                         //Spawn card for what's being spawned, PlacementRule for where it's being spawned.
-                        //Index is set to player so it doesn't kill the player.
                         DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, RoR2Application.rng)
                         {
                             teamIndexOverride = squidTeam
@@ -133,7 +141,6 @@ namespace SquidPatrol
                         //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
-                        squidTurret.inventory.GiveItem(squidTurretItem.itemIndex, 30);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
                         if (Util.CheckRoll(1))
                         {
@@ -143,13 +150,13 @@ namespace SquidPatrol
                         {
                             squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
                             }
+                        AdoptASquidToday(squidTurret);
                         }));
-                        //Finally, sending the reuqest to spawn the squid with everything so far.
+                        //Finally, sending the request to spawn the squid with everything so far.
                         DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
                     }
                 }
             }
-            //Since it's a hook, it needs to be restored to its original point & that's done here.
             orig(self, report);
         }
 
@@ -163,6 +170,5 @@ namespace SquidPatrol
                 PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(squidTurretItem.itemIndex), transform.position, transform.forward * 20f);
             };
         }
-   
     }
 }
