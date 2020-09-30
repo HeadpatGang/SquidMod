@@ -69,7 +69,7 @@ namespace SquidPatrol
             //All of our previously defined tokens are being added onto the item.
             R2API.LanguageAPI.Add("SQUID_TURRET_NAME", "Deadmans Friend");
             R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawns a Squid Polyp on Kill. <style=cIsUtility> 5% Chance </style> to become <style=cDeath> Hostile </style>");
-            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Killing an enemy spawns a Squid Polyp with a 1% chance to become <style=cArtifact> Elite </style>, but <style=cIsUtility> 5% Chance </style> <style=cStack> (-1% per stack) </style> to become <style=cDeath> Hostile </style>.");
+            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Killing an enemy spawns a Squid Polyp with a 1% chance to become <style=cArtifact> Elite </style>, but <style=cIsUtility> 5% Chance </style> <style=cStack> (+1% per stack) </style> to become <style=cDeath> Hostile </style>.");
             R2API.LanguageAPI.Add("SQUID_TURRET_LORE", "One squid in the ocean is worth a thousand on land.");
         }
 
@@ -102,7 +102,7 @@ namespace SquidPatrol
         {
             if (report.attackerBody.inventory)
             {
-                int squidCheck = 5 - report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
+                int squidCheck = 5 + report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
                 var squidTeam = Util.CheckRoll(squidCheck) ? TeamIndex.Monster : TeamIndex.Player;
                 //If I am null or the report is null, do nothing.
                 if (self is null) return;
