@@ -3,6 +3,7 @@ using RoR2;
 using R2API;
 using R2API.Utils;
 using UnityEngine;
+using UnityEngine.Networking;
 using System;
 using System.Security;
 using System.Security.Permissions;
@@ -94,23 +95,24 @@ namespace SquidPatrol
 
         private void AdoptASquidToday(CharacterMaster squidTurret)
         {
-            MasterSummon masterSummon = new MasterSummon();
-            CharacterBody ownerBody = new CharacterBody();
+            CharacterMaster newOwnerMaster = new CharacterMaster();
+            squidTurret.minionOwnership.ownerMasterId = new NetworkInstanceId();
+            squidTurret.minionOwnership.SetOwner(newOwnerMaster);  
         }
 
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
             if (report.attackerBody.inventory)
             {
-                int squidCheck = 5 + report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
-                var squidTeam = Util.CheckRoll(squidCheck) ? TeamIndex.Monster : TeamIndex.Player;
+               int HowManySquidsAreInYourPocket = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
+                int squidStackCheck = 5 + HowManySquidsAreInYourPocket;
+                var squidTeam = Util.CheckRoll(squidStackCheck) ? TeamIndex.Monster : TeamIndex.Player;
                 //If I am null or the report is null, do nothing.
                 if (self is null) return;
                 if (report is null) return;
                 //If there's a victim & an attacker start the spawning process (basically on kill)
                 if (report.victimBody && report.attacker)
                 {
-                 int HowManySquidsAreInYourPocket = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
                     if (HowManySquidsAreInYourPocket > 0)
                     {
                         //Spawn card is just what's being spawned, in this case it's a Squid Turret
@@ -147,7 +149,7 @@ namespace SquidPatrol
                         if (Util.CheckRoll(1))
                         {
                             squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
-                         }
+                        }
                         AdoptASquidToday(squidTurret);
                         }));
                         //Finally, sending the request to spawn the squid with everything so far.
