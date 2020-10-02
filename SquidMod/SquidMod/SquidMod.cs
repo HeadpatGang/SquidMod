@@ -107,43 +107,34 @@ namespace SquidPatrol
                 {
                     if (HowManySquidsAreInYourPocket > 0)
                     {
-                        //Spawn card is just what's being spawned, in this case it's a Squid Turret
                         SpawnCard spawnCard = Resources.Load<CharacterSpawnCard>("SpawnCards/CharacterSpawnCards/cscSquidTurret");
-                        //Placement rule is how far from the body the squid can spawn
                         DirectorPlacementRule placementRule = new DirectorPlacementRule
                         {
-                            placementMode = DirectorPlacementRule.PlacementMode.Approximate,
-                            minDistance = 5f,
-                            maxDistance = 25f,
                             spawnOnTarget = report.victimBody.transform,
                         };
-                        //Starts the spawning request using everything created so far
-                        //Spawn card for what's being spawned, PlacementRule for where it's being spawned.
                         DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, RoR2Application.rng)
                         {
-                            teamIndexOverride = squidTeam
+                            
                         };
-                        //Creates a secondary spawn request that mimics the first ones properties, just this time adding items into the spawn request.
-                        //Can potentially be brought down into one spawn request.
                         DirectorSpawnRequest directorSpawnRequest2 = directorSpawnRequest;
                         directorSpawnRequest2.onSpawnedServer = (Action<SpawnCard.SpawnResult>)Delegate.Combine(directorSpawnRequest2.onSpawnedServer, new Action<SpawnCard.SpawnResult>(delegate (SpawnCard.SpawnResult result)
                         {
-                        //Gets the squids inventory from the spawned instance that had occured
-                        //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 20 * HowManySquidsAreInYourPocket);
-                        if (Util.CheckRoll(1))
-                        {
-                            squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
-                        }
-                        if (Util.CheckRoll(1))
-                        {
-                            squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
-                        }
+                            if (squidTeam == TeamIndex.Player)
+                            {
+                                if (Util.CheckRoll(1))
+                                {
+                                    squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
+                                }
+                                if (Util.CheckRoll(1))
+                                {
+                                    squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
+                                }
+                            }
                         squidTurret.minionOwnership.SetOwner(report.attackerMaster);
                         }));
-                        //Finally, sending the request to spawn the squid with everything so far.
                         DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
                     }
                 }
