@@ -128,7 +128,7 @@ namespace SquidPatrol
                                 {
                                     squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
                                 }
-                                if (Util.CheckRoll(1))
+                                else if (Util.CheckRoll(1))
                                 {
                                     squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
                                 }
