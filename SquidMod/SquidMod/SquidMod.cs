@@ -35,7 +35,6 @@ namespace SquidPatrol
             //Calls all of my methods
             ItemDefinition();
             JackedSquidsGettingBuffed();
-            R2API.Utils.CommandHelper.AddToConsoleWhenReady();
             Hook();
         }
 
@@ -93,13 +92,6 @@ namespace SquidPatrol
             };
         }
 
-        private void AdoptASquidToday(CharacterMaster squidTurret)
-        {
-            CharacterMaster newOwnerMaster = new CharacterMaster();
-            squidTurret.minionOwnership.ownerMasterId = new NetworkInstanceId();
-            squidTurret.minionOwnership.SetOwner(newOwnerMaster);  
-        }
-
         private void GalaticAquaticAquarium(On.RoR2.GlobalEventManager.orig_OnCharacterDeath orig, GlobalEventManager self, DamageReport report)
         {
             if (report.attackerBody.inventory)
@@ -140,8 +132,7 @@ namespace SquidPatrol
                         //Gives the squids health decay in order to drains its hp & the attack speed boost to speeds its attack up per stack.
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
-                        squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 10 * HowManySquidsAreInYourPocket);
-                        squidTurret.inventory.CopyItemsFrom(report.attackerBody.inventory);
+                        squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 20 * HowManySquidsAreInYourPocket);
                         if (Util.CheckRoll(1))
                         {
                             squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
@@ -150,7 +141,7 @@ namespace SquidPatrol
                         {
                             squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
                         }
-                        AdoptASquidToday(squidTurret);
+                        squidTurret.minionOwnership.SetOwner(report.attackerMaster);
                         }));
                         //Finally, sending the request to spawn the squid with everything so far.
                         DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
@@ -176,12 +167,8 @@ namespace SquidPatrol
                 //pcmc is then accessing the inventory of the player & spawning in a Deadmans Friend & a Dio's Best Friend
                 PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
                 PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.CaptainDefenseMatrix, 5);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.CritGlasses, 10);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.BleedOnHit, 5);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.BleedOnHitAndExplode, 5);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.Clover, 5);
+                pcmc[0].master.inventory.GiveItem(ItemIndex.Squid, 5);
             };
         }
-    }
+    }   
 }
