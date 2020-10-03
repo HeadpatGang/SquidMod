@@ -3,7 +3,6 @@ using RoR2;
 using R2API;
 using R2API.Utils;
 using UnityEngine;
-using UnityEngine.Networking;
 using System;
 using System.Security;
 using System.Security.Permissions;
@@ -15,7 +14,6 @@ using System.Linq;
 
 namespace SquidPatrol
 {
-
     [BepInDependency("com.bepis.r2api")]
     [R2APISubmoduleDependency(nameof(ItemAPI), nameof(ItemDropAPI), nameof(LanguageAPI))]
     [BepInPlugin("com.Jessica.SquidPatrol", "Squid Patrol", "1.0.0")]
@@ -140,21 +138,31 @@ namespace SquidPatrol
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
                         squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 45);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 20 * HowManySquidsAreInYourPocket);
-                        //A check is them performed to check if the squid is on the player index.
-                        //If this check if passed, a 1/100 roll is performed to see if the squid inherits a random item from the SquidItemIndex created at the top of page.
-                        //If this fails, a secondary 1/100 roll is performed to see if the squid inherits a random elite buff from the SquidBuffIndex created in "JackedSquidsGettingBuffed" method.
+                        //Three variables are created here, one being the current run in order to invoke the next two.
+                        //The current fixed time is then generated & divided by 60 to turn the current chance to a 1:1 for 1% every 1 minute.
+                        //A fixed rate of base being 1%, then adding whatever the current additional chance is.
+                        //The HowManySquidsTimesTwo is really, really bad, I'm just creating it for now to check if it works, will make it better later.
+                        Run newRun = new Run();
+                        float AdditionalChance = newRun.fixedTime / 60;
+                        int HowManySquidsTimesTwo = HowManySquidsAreInYourPocket * 2;
+                        float squidSpawnAsBuffedSquidChance = 1 + AdditionalChance + HowManySquidsTimesTwo;
+                            //A check is them performed to check if the squid is on the player index.
+                            //If this check if passed, a 1/100 roll is performed to see if the squid inherits a random item from the SquidItemIndex created at the top of page.
+                            //If this fails, a secondary 1/100 roll is performed to see if the squid inherits a random elite buff from the SquidBuffIndex created in "JackedSquidsGettingBuffed" method.
                             if (squidTeam == TeamIndex.Player)
                             {
-                                if (Util.CheckRoll(1))
+                                if (Util.CheckRoll(squidSpawnAsBuffedSquidChance))
+                                {
+                                    squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
+                                    
+                                }
+                                else if (Util.CheckRoll(squidSpawnAsBuffedSquidChance))
                                 {
                                     squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
                                 }
-                                else if (Util.CheckRoll(1))
-                                {
-                                    squidTurret.GetBody().AddBuff(SquidBuffIndex[UnityEngine.Random.Range(0, SquidBuffIndex.Count())]);
-                                }
                             }
-                        //Once these checks have passed, the squidTurrets ownership is passed onto the attacker who initially spawned it.
+                            //Once these checks have passed, the squidTurrets ownership is passed onto the attacker who initially spawned it.
+                        
                         squidTurret.minionOwnership.SetOwner(report.attackerMaster);
                         }));
                         //Finally the squid is attempted to be spawned.
