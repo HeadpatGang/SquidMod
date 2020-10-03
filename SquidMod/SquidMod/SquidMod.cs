@@ -141,11 +141,8 @@ namespace SquidPatrol
                         //Three variables are created here, one being the current run in order to invoke the next two.
                         //The current fixed time is then generated & divided by 60 to turn the current chance to a 1:1 for 1% every 1 minute.
                         //A fixed rate of base being 1%, then adding whatever the current additional chance is.
-                        //The HowManySquidsTimesTwo is really, really bad, I'm just creating it for now to check if it works, will make it better later.
-                        Run newRun = new Run();
-                        float AdditionalChance = newRun.fixedTime / 60;
-                        int HowManySquidsTimesTwo = HowManySquidsAreInYourPocket * 2;
-                        float squidSpawnAsBuffedSquidChance = 1 + AdditionalChance + HowManySquidsTimesTwo;
+                        float AdditionalChance = Run.instance.fixedTime;
+                        float squidSpawnAsBuffedSquidChance = 1 + (AdditionalChance / 60) + (HowManySquidsAreInYourPocket * 2);
                             //A check is them performed to check if the squid is on the player index.
                             //If this check if passed, a 1/100 roll is performed to see if the squid inherits a random item from the SquidItemIndex created at the top of page.
                             //If this fails, a secondary 1/100 roll is performed to see if the squid inherits a random elite buff from the SquidBuffIndex created in "JackedSquidsGettingBuffed" method.
@@ -161,8 +158,7 @@ namespace SquidPatrol
                                     squidTurret.inventory.GiveItem(SquidItemIndex[UnityEngine.Random.Range(0, SquidItemIndex.Count())]);
                                 }
                             }
-                            //Once these checks have passed, the squidTurrets ownership is passed onto the attacker who initially spawned it.
-                        
+                        //Once these checks have passed, the squidTurrets ownership is passed onto the attacker who initially spawned it.
                         squidTurret.minionOwnership.SetOwner(report.attackerMaster);
                         }));
                         //Finally the squid is attempted to be spawned.
