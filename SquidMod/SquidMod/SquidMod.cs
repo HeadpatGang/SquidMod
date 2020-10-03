@@ -96,13 +96,11 @@ namespace SquidPatrol
         {
             if (report.attackerBody.inventory)
             {
-               int HowManySquidsAreInYourPocket = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
+                int HowManySquidsAreInYourPocket = report.attackerBody.inventory.GetItemCount(squidTurretItem.itemIndex);
                 int squidStackCheck = 5 + HowManySquidsAreInYourPocket;
                 var squidTeam = Util.CheckRoll(squidStackCheck) ? TeamIndex.Monster : TeamIndex.Player;
-                //If I am null or the report is null, do nothing.
                 if (self is null) return;
                 if (report is null) return;
-                //If there's a victim & an attacker start the spawning process (basically on kill)
                 if (report.victimBody && report.attacker)
                 {
                     if (HowManySquidsAreInYourPocket > 0)
@@ -120,7 +118,7 @@ namespace SquidPatrol
                         directorSpawnRequest2.onSpawnedServer = (Action<SpawnCard.SpawnResult>)Delegate.Combine(directorSpawnRequest2.onSpawnedServer, new Action<SpawnCard.SpawnResult>(delegate (SpawnCard.SpawnResult result)
                         {
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
-                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 30);
+                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 15);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 20 * HowManySquidsAreInYourPocket);
                             if (squidTeam == TeamIndex.Player)
                             {
@@ -150,15 +148,6 @@ namespace SquidPatrol
             {
                 var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
                 PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(squidTurretItem.itemIndex), transform.position, transform.forward * 20f);
-            };
-
-            if (Input.GetKeyDown(KeyCode.F2))
-            {
-                //This function is taking a copy of PlayerCharacterMasterController & copying it into pcmc
-                //pcmc is then accessing the inventory of the player & spawning in a Deadmans Friend & a Dio's Best Friend
-                PlayerCharacterMasterController[] pcmc = new PlayerCharacterMasterController[1];
-                PlayerCharacterMasterController.instances.CopyTo(pcmc, 0);
-                pcmc[0].master.inventory.GiveItem(ItemIndex.Squid, 5);
             };
         }
     }   
