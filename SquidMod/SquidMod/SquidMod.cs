@@ -32,7 +32,6 @@ namespace SquidPatrol
 
         public void Awake()
         {
-            //Calls all of my methods
             ItemDefinition();
             JackedSquidsGettingBuffed();
             Hook();
@@ -43,20 +42,15 @@ namespace SquidPatrol
             //Defines the item to be used later on
             squidTurretItem = new ItemDef
             {
-                //R2 API Tokens
                 name = "SQUID_TURRET_NAME",
                 nameToken = "SQUID_TURRET_NAME",
                 pickupToken = "SQUID_TURRET_PICKUP",
                 descriptionToken = "SQUID_TURRET_DESC",
                 loreToken = "SQUID_TURRET_LORE",
-                //Makes it Red Tier
                 tier = ItemTier.Lunar,
-                //Default Squid stuff at the moment, custom stuff soonTM?
                 pickupModelPath = "Prefabs/PickupModels/PickupSquidTurret",
                 pickupIconPath = "Textures/ItemIcons/texSquidTurretIcon",
-                //Can be removed by 3D Printer / Shrine of Order / Scrapper
                 canRemove = true,
-                //Isn't hidden, E.G AttackBoost, DrizzlePlayerHelper. Can be seen in the inventory
                 hidden = false,
             };
             var displayRules = new ItemDisplayRuleDict(null);
@@ -66,7 +60,6 @@ namespace SquidPatrol
 
         private void AddTokens()
         {
-            //All of our previously defined tokens are being added onto the item.
             R2API.LanguageAPI.Add("SQUID_TURRET_NAME", "Deadmans Friend");
             R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawns a Squid Polyp on Kill. <style=cIsUtility> 5% Chance </style> to become <style=cDeath> Hostile </style>");
             R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Killing an enemy spawns a Squid Polyp with a 1% chance to become <style=cArtifact> Elite </style>, but <style=cIsUtility> 5% Chance </style> <style=cStack> (+1% per stack) </style> to become <style=cDeath> Hostile </style>.");
@@ -75,7 +68,6 @@ namespace SquidPatrol
 
         private void Hook()
         {
-            //All of my hooks are going here because it's nicer to look at & easier to configure / update.
             On.RoR2.GlobalEventManager.OnCharacterDeath += GalaticAquaticAquarium;
         }
 
@@ -142,8 +134,6 @@ namespace SquidPatrol
 
         public void Update()
         {
-            //Very self explanatory, if the F1 key is pressed, create an item drop infront of the player with the Deadmans Friend item.
-            //Used for testing models / pickup models without needing to find one.
             if (Input.GetKeyDown(KeyCode.F1))
             {
                 var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
