@@ -34,6 +34,7 @@ namespace SquidPatrol
         {
             ItemDefinition();
             JackedSquidsGettingBuffed();
+            SpawnASquid();
             Hook();
         }
 
@@ -132,13 +133,18 @@ namespace SquidPatrol
             orig(self, report);
         }
 
-        public void Update()
+        private void SpawnASquid()
         {
             if (Input.GetKeyDown(KeyCode.F1))
             {
                 var transform = PlayerCharacterMasterController.instances[0].master.GetBodyObject().transform;
                 PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(squidTurretItem.itemIndex), transform.position, transform.forward * 20f);
             };
+        }
+
+        public void Update()
+        {
+
         }
     }   
 }
