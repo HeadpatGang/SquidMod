@@ -35,7 +35,6 @@ namespace SquidPatrol
             //Calls everything when the mod wakes up.
             ItemDefinition();
             JackedSquidsGettingBuffed();
-            SpawnASquid();
             Hook();
         }
 
@@ -125,7 +124,7 @@ namespace SquidPatrol
                         //A spawn request is generated using the aforementioned variables of Spawn Card and the Placement Rule.
                         DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(spawnCard, placementRule, RoR2Application.rng)
                         {
-                            
+                            teamIndexOverride = squidTeam
                         };
                         //A secondary spawn request is then made using the first one as a baseline
                         //The second spawn request delagates the initial spawn request into a new Action which is Spawn Result and names it result.
@@ -176,7 +175,7 @@ namespace SquidPatrol
 
         public void Update()
         {
-
+            SpawnASquid();
         }
     }   
 }
