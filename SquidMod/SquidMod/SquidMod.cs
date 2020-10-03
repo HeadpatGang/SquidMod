@@ -119,6 +119,9 @@ namespace SquidPatrol
                         //A placement rule is created so that the Squid Turrets spawn on the victims body.
                         DirectorPlacementRule placementRule = new DirectorPlacementRule
                         {
+                            placementMode = DirectorPlacementRule.PlacementMode.Approximate,
+                            minDistance = 5f,
+                            maxDistance = 25f,
                             spawnOnTarget = report.victimBody.transform,
                         };
                         //A spawn request is generated using the aforementioned variables of Spawn Card and the Placement Rule.
@@ -135,7 +138,7 @@ namespace SquidPatrol
                         //The squid is then given 15 stacks of Health Decay (Half of a regular squid)
                         //It is also given 20 BoostAttackSpeeds which is then amplified by the amount of squidTurretItems the attacker has (Double the regular squid)
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
-                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 15);
+                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 45);
                         squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 20 * HowManySquidsAreInYourPocket);
                         //A check is them performed to check if the squid is on the player index.
                         //If this check if passed, a 1/100 roll is performed to see if the squid inherits a random item from the SquidItemIndex created at the top of page.
