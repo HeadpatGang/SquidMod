@@ -63,8 +63,8 @@ namespace SquidPatrol
         {
             //Adds all of our tokens previously made in ItemDefinition to an item in-game via the LanguageAPI
             R2API.LanguageAPI.Add("SQUID_TURRET_NAME", "Deadmans Friend");
-            R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawns a Squid Polyp on Kill. <style=cIsUtility> 5% Chance </style> to become <style=cDeath> Hostile </style>");
-            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Killing an enemy spawns a Squid Polyp with a 1% chance to become <style=cArtifact> Elite </style>, but <style=cIsUtility> 5% Chance </style> <style=cStack> (+1% per stack) </style> to become <style=cDeath> Hostile </style>.");
+            R2API.LanguageAPI.Add("SQUID_TURRET_PICKUP", "Spawns a Squid Polyp on Kill. <style=cIsUtility> 5% Chance </style> <style=cStack> (+1% per Stack) </style> to become <style=cDeath> Hostile </style>");
+            R2API.LanguageAPI.Add("SQUID_TURRET_DESC", "Killing an enemy spawns a Squid Polyp with a 1% chance to become <style=cArtifact> Elite </style> <style=cStack> (+2% per Stack, +1% every minute) </style>, but <style=cIsUtility> 5% Chance </style> <style=cStack> (+1% per stack) </style> to become <style=cDeath> Hostile </style>.");
             R2API.LanguageAPI.Add("SQUID_TURRET_LORE", "One squid in the ocean is worth a thousand on land.");
         }
 
@@ -136,8 +136,15 @@ namespace SquidPatrol
                         //The squid is then given 15 stacks of Health Decay (Half of a regular squid)
                         //It is also given 20 BoostAttackSpeeds which is then amplified by the amount of squidTurretItems the attacker has (Double the regular squid)
                         CharacterMaster squidTurret = result.spawnedInstance.GetComponent<CharacterMaster>();
-                        squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 45);
-                        squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 20 * HowManySquidsAreInYourPocket);
+                        if (squidTeam == TeamIndex.Monster)
+                        {
+                            squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 20);
+                            squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 5 * HowManySquidsAreInYourPocket);
+                        }
+                        else {
+                            squidTurret.inventory.GiveItem(ItemIndex.HealthDecay, 45);
+                            squidTurret.inventory.GiveItem(ItemIndex.BoostAttackSpeed, 20 * HowManySquidsAreInYourPocket);
+                        }
                         //Three variables are created here, one being the current run in order to invoke the next two.
                         //The current fixed time is then generated & divided by 60 to turn the current chance to a 1:1 for 1% every 1 minute.
                         //A fixed rate of base being 1%, then adding whatever the current additional chance is.
@@ -182,7 +189,7 @@ namespace SquidPatrol
 
         public void Update()
         {
-            SpawnASquid();
+            //SpawnASquid();
         }
     }   
 }
