@@ -169,7 +169,10 @@ namespace SquidPatrol
                         squidTurret.minionOwnership.SetOwner(report.attackerMaster);
                         }));
                         //Finally the squid is attempted to be spawned.
+                        if (Util.CheckRoll(25))
+                        {
                         DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
+                        }
                     }
                 }
             }
